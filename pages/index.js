@@ -48,7 +48,7 @@ function Titulo(props) {
 }
 
 export default function PaginaInicial() {
-  const username = 'LucasPimentel123';
+  const username = 'Lucaspimentel123';
 
   return (
     <>
@@ -56,8 +56,12 @@ export default function PaginaInicial() {
       <Box
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backgroundColor: appConfig.theme.colors.primary[500],
-          backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
+         
+          backgroundPosition: 'center center',
+          backgroundImage: {
+                            xs:'url(https://images3.alphacoders.com/707/707551.jpg)',
+                            md: 'url(https://images5.alphacoders.com/395/395194.jpg)',
+                          },
           backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
         }}
       >
@@ -70,7 +74,7 @@ export default function PaginaInicial() {
               xs: 'column',
               sm: 'row',
             },
-            width: '100%', maxWidth: '700px',
+            width: '80%', maxWidth: '700px',
             borderRadius: '5px', padding: '32px', margin: '16px',
             boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
             backgroundColor: appConfig.theme.colors.neutrals[700],
