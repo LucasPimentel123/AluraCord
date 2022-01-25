@@ -58,10 +58,8 @@ export default function PaginaInicial() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
          
           backgroundPosition: 'center center',
-          backgroundImage: {
-                            xs:'url(https://images3.alphacoders.com/707/707551.jpg)',
-                            md: 'url(https://images5.alphacoders.com/395/395194.jpg)',
-                          },
+          backgroundImage: 
+                            'url(https://images3.alphacoders.com/707/707551.jpg)',
           backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
         }}
       >
