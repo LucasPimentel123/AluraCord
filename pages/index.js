@@ -1,35 +1,7 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import React from 'react';
+import { useRouter } from "next/router";
 import appConfig from '../config.json';
-
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: 'Open Sans', sans-serif;
-      }
-      /* App fit Height */ 
-      html, body, #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */ 
-    `}</style>
-  );
-}
-
 
 function Titulo(props) {
   const Tag = props.tag || "h1";
@@ -47,19 +19,81 @@ function Titulo(props) {
   );
 }
 
-export default function PaginaInicial() {
-  const username = 'Lucaspimentel123';
+function confereUserName(nome) {
+  if (nome.length >= 2) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function HabilitaBotao(props) {
+  if (confereUserName(props.name)) {
+    return (
+      <>
+        <Button
+          type="submit"
+          label="Entrar"
+          fullWidth
+          buttonColors={{
+            contrastColor: appConfig.theme.colors.neutrals["000"],
+            mainColor: '#2A62B7',
+            mainColorLight: '#2D68C8',
+            mainColorStrong: '#173564',
+          }}
+        />
+      </>
+    );
+  }
 
   return (
     <>
-      <GlobalStyle />
+      <Button
+        type="submit"
+        label="Entrar"
+        disabled
+        fullWidth
+        buttonColors={{
+          contrastColor: appConfig.theme.colors.neutrals["000"],
+          mainColor: '#2A62B7',
+          mainColorLight: '#2D68C8',
+          mainColorStrong: '#173564',
+        }}
+      />
+    </>
+  );
+}
+
+function HabilitaImagem(props) {
+  if (confereUserName(props.name)) {
+    return (
+      <>
+        <img src={`https://github.com/${props.name}.png`}></img>
+        <style jsx>{`
+            img {
+              border-radius: 50%;
+              margin-bottom: 16px;
+            }
+          `}</style>
+      </>
+    );
+  }
+
+  return null;
+}
+
+export default function PaginaInicial() {
+  const [username, setUsername] = React.useState('');
+  const roteamento = useRouter();
+
+  return (
+    <>
       <Box
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-         
+
           backgroundPosition: 'center center',
-          backgroundImage: 
-                            'url(https://images3.alphacoders.com/707/707551.jpg)',
+          backgroundImage: 'url(https://images3.alphacoders.com/707/707551.jpg)',
           backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
         }}
       >
@@ -78,9 +112,15 @@ export default function PaginaInicial() {
             backgroundColor: appConfig.theme.colors.neutrals[700],
           }}
         >
+
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={function (infoEvent) {
+              infoEvent.preventDefault();
+              roteamento.push('/chat');
+
+            }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -92,27 +132,26 @@ export default function PaginaInicial() {
             </Text>
 
             <TextField
+              value={username}
+              onChange={function handler(event) {
+                //guarda nome digitado pelo usuario
+                const valor = event.target.value;
+                console.log('alguem digitou');
+                //muda username para o nome digitado
+                setUsername(valor);
+              }}
+              placeholder='Digite seu usuário do Github (min. 2 char)'
               fullWidth
               textFieldColors={{
                 neutral: {
                   textColor: appConfig.theme.colors.neutrals[200],
                   mainColor: appConfig.theme.colors.neutrals[900],
-                  mainColorHighlight: appConfig.theme.colors.primary[500],
+                  mainColorHighlight: '#2D68C8',
                   backgroundColor: appConfig.theme.colors.neutrals[800],
                 },
               }}
             />
-            <Button
-              type='submit'
-              label='Entrar'
-              fullWidth
-              buttonColors={{
-                contrastColor: appConfig.theme.colors.neutrals["000"],
-                mainColor: appConfig.theme.colors.primary[500],
-                mainColorLight: appConfig.theme.colors.primary[400],
-                mainColorStrong: appConfig.theme.colors.primary[600],
-              }}
-            />
+            <HabilitaBotao name={username}> </HabilitaBotao>
           </Box>
           {/* Formulário */}
 
@@ -140,6 +179,7 @@ export default function PaginaInicial() {
               }}
               src={`https://github.com/${username}.png`}
             />
+
             <Text
               variant="body4"
               styleSheet={{
