@@ -1,70 +1,9 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from "next/router";
 import appConfig from '../config.json';
 
-function Titulo(props) {
-  const Tag = props.tag || "h1";
-  return (
-    <>
-      <Tag>{props.children}</Tag>
-      <style jsx>{`
-            ${Tag} {
-              color: ${appConfig.theme.colors.neutrals["000"]};
-              font-size: 24px;
-              font-weight: 600;
-            }
-          `}</style>
-    </>
-  );
-}
-
-function confereUserName(nome) {
-  if (nome.length >= 2) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function HabilitaBotao(props) {
-  if (confereUserName(props.name)) {
-    return (
-      <>
-        <Button
-          type="submit"
-          label="Entrar"
-          fullWidth
-          buttonColors={{
-            contrastColor: appConfig.theme.colors.neutrals["000"],
-            mainColor: '#2A62B7',
-            mainColorLight: '#2D68C8',
-            mainColorStrong: '#173564',
-          }}
-        />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Button
-        type="submit"
-        label="Entrar"
-        disabled
-        fullWidth
-        buttonColors={{
-          contrastColor: appConfig.theme.colors.neutrals["000"],
-          mainColor: '#2A62B7',
-          mainColorLight: '#2D68C8',
-          mainColorStrong: '#173564',
-        }}
-      />
-    </>
-  );
-}
-
-function HabilitaImagem(props) {
+/*function HabilitaImagem(props) {
   if (confereUserName(props.name)) {
     return (
       <>
@@ -80,11 +19,20 @@ function HabilitaImagem(props) {
   }
 
   return null;
+}*/
+
+function confereUserName(nome) {
+  if (nome.length >= 2) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 export default function PaginaInicial() {
   const [username, setUsername] = React.useState('');
   const roteamento = useRouter();
+  const [gitApi, setGitApi] = React.useState('');
 
   return (
     <>
@@ -136,9 +84,17 @@ export default function PaginaInicial() {
               onChange={function handler(event) {
                 //guarda nome digitado pelo usuario
                 const valor = event.target.value;
-                console.log('alguem digitou');
                 //muda username para o nome digitado
                 setUsername(valor);
+
+               /* fetch(`https://api.github.com/users/${valor}`)
+                .then(function(resposta){
+                  return resposta.json();
+                })
+                .then(function(respostaAtt){
+                  setGitApi(respostaAtt);
+                  console.log(gitApi);
+                })*/
               }}
               placeholder='Digite seu usuário do Github (min. 2 char)'
               fullWidth
@@ -151,7 +107,7 @@ export default function PaginaInicial() {
                 },
               }}
             />
-            <HabilitaBotao name={username}> </HabilitaBotao>
+            <BotaoEntrar name={username}> </BotaoEntrar>
           </Box>
           {/* Formulário */}
 
@@ -189,12 +145,87 @@ export default function PaginaInicial() {
                 borderRadius: '1000px'
               }}
             >
-              {username}
+              {username} 
+            </Text>
+            <Text
+              variant="body4"
+              styleSheet={{
+                color: appConfig.theme.colors.neutrals[200],
+                backgroundColor: appConfig.theme.colors.neutrals[900],
+                padding: '3px 10px',
+                borderRadius: '1000px'
+              }}
+            >
+              Seguidores:            
+            </Text>
+            <Text
+              variant="body4"
+              styleSheet={{
+                color: appConfig.theme.colors.neutrals[200],
+                backgroundColor: appConfig.theme.colors.neutrals[900],
+                padding: '3px 10px',
+                borderRadius: '1000px'
+              }}
+            >
+              Repositórios:
             </Text>
           </Box>
           {/* Photo Area */}
         </Box>
       </Box>
+    </>
+  );
+}
+
+function Titulo(props) {
+  const Tag = props.tag || "h1";
+  return (
+    <>
+      <Tag>{props.children}</Tag>
+      <style jsx>{`
+            ${Tag} {
+              color: ${appConfig.theme.colors.neutrals["000"]};
+              font-size: 24px;
+              font-weight: 600;
+            }
+          `}</style>
+    </>
+  );
+}
+
+function BotaoEntrar(props) {
+  if (confereUserName(props.name)) {
+    return (
+      <>
+        <Button
+          type="submit"
+          label="Entrar"
+          fullWidth
+          buttonColors={{
+            contrastColor: appConfig.theme.colors.neutrals["000"],
+            mainColor: '#2A62B7',
+            mainColorLight: '#2D68C8',
+            mainColorStrong: '#173564',
+          }}
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Button
+        type="submit"
+        label="Entrar"
+        disabled
+        fullWidth
+        buttonColors={{
+          contrastColor: appConfig.theme.colors.neutrals["000"],
+          mainColor: '#2A62B7',
+          mainColorLight: '#2D68C8',
+          mainColorStrong: '#173564',
+        }}
+      />
     </>
   );
 }
