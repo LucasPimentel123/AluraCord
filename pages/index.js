@@ -3,24 +3,6 @@ import React, { useEffect } from 'react';
 import { useRouter } from "next/router";
 import appConfig from '../config.json';
 
-/*function HabilitaImagem(props) {
-  if (confereUserName(props.name)) {
-    return (
-      <>
-        <img src={`https://github.com/${props.name}.png`}></img>
-        <style jsx>{`
-            img {
-              border-radius: 50%;
-              margin-bottom: 16px;
-            }
-          `}</style>
-      </>
-    );
-  }
-
-  return null;
-}*/
-
 function confereUserName(nome) {
   if (nome.length >= 2) {
     return true;
@@ -87,14 +69,14 @@ export default function PaginaInicial() {
                 //muda username para o nome digitado
                 setUsername(valor);
 
-               /* fetch(`https://api.github.com/users/${valor}`)
-                .then(function(resposta){
-                  return resposta.json();
-                })
-                .then(function(respostaAtt){
-                  setGitApi(respostaAtt);
-                  console.log(gitApi);
-                })*/
+                fetch(`https://api.github.com/users/${valor}`)
+                  .then(function (resposta) {
+                    return resposta.json();
+                  })
+                  .then(function (respostaAtt) {
+                    setGitApi(respostaAtt);
+                    console.log(gitApi);
+                  })
               }}
               placeholder='Digite seu usuário do Github (min. 2 char)'
               fullWidth
@@ -113,63 +95,7 @@ export default function PaginaInicial() {
 
 
           {/* Photo Area */}
-          <Box
-            styleSheet={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              maxWidth: '200px',
-              padding: '16px',
-              backgroundColor: appConfig.theme.colors.neutrals[800],
-              border: '1px solid',
-              borderColor: appConfig.theme.colors.neutrals[999],
-              borderRadius: '10px',
-              flex: 1,
-              minHeight: '240px',
-            }}
-          >
-            <Image
-              styleSheet={{
-                borderRadius: '50%',
-                marginBottom: '16px',
-              }}
-              src={`https://github.com/${username}.png`}
-            />
-
-            <Text
-              variant="body4"
-              styleSheet={{
-                color: appConfig.theme.colors.neutrals[200],
-                backgroundColor: appConfig.theme.colors.neutrals[900],
-                padding: '3px 10px',
-                borderRadius: '1000px'
-              }}
-            >
-              {username} 
-            </Text>
-            <Text
-              variant="body4"
-              styleSheet={{
-                color: appConfig.theme.colors.neutrals[200],
-                backgroundColor: appConfig.theme.colors.neutrals[900],
-                padding: '3px 10px',
-                borderRadius: '1000px'
-              }}
-            >
-              Seguidores:            
-            </Text>
-            <Text
-              variant="body4"
-              styleSheet={{
-                color: appConfig.theme.colors.neutrals[200],
-                backgroundColor: appConfig.theme.colors.neutrals[900],
-                padding: '3px 10px',
-                borderRadius: '1000px'
-              }}
-            >
-              Repositórios:
-            </Text>
-          </Box>
+          <ImagemDePerfil name={username} api={gitApi}> </ImagemDePerfil>
           {/* Photo Area */}
         </Box>
       </Box>
@@ -227,5 +153,95 @@ function BotaoEntrar(props) {
         }}
       />
     </>
+  );
+}
+
+function ImagemDePerfil(props) {
+  if (confereUserName(props.name)) {
+    return (
+      <Box
+        styleSheet={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          maxWidth: '200px',
+          padding: '16px',
+          backgroundColor: appConfig.theme.colors.neutrals[800],
+          border: '1px solid',
+          borderColor: appConfig.theme.colors.neutrals[999],
+          borderRadius: '10px',
+          flex: 1,
+          minHeight: '240px',
+        }}
+      >
+        <Image
+          styleSheet={{
+            borderRadius: '50%',
+            marginBottom: '16px',
+          }}
+          src={`https://github.com/${props.name}.png`}
+        />
+
+        <Text
+          variant="body4"
+          styleSheet={{
+            color: appConfig.theme.colors.neutrals[200],
+            backgroundColor: appConfig.theme.colors.neutrals[900],
+            padding: '3px 10px',
+            borderRadius: '1000px'
+          }}
+        >
+          {props.name}
+        </Text>
+        <Text
+          variant="body4"
+          styleSheet={{
+            color: appConfig.theme.colors.neutrals[200],
+            backgroundColor: appConfig.theme.colors.neutrals[900],
+            padding: '3px 10px',
+            borderRadius: '1000px'
+          }}
+        >
+          Seguidores: {props.api.followers}
+        </Text>
+        <Text
+          variant="body4"
+          styleSheet={{
+            color: appConfig.theme.colors.neutrals[200],
+            backgroundColor: appConfig.theme.colors.neutrals[900],
+            padding: '3px 10px',
+            borderRadius: '1000px'
+          }}
+        >
+          Repositórios: {props.api.public_repos}
+        </Text>
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      styleSheet={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        maxWidth: '200px',
+        padding: '16px',
+        backgroundColor: appConfig.theme.colors.neutrals[800],
+        border: '1px solid',
+        borderColor: appConfig.theme.colors.neutrals[999],
+        borderRadius: '10px',
+        flex: 1,
+        minHeight: '240px',
+      }}
+    >
+      <Image
+        styleSheet={{
+          borderRadius: '50%',
+          marginBottom: '16px',
+        }}
+        src={'https://i.pinimg.com/564x/0a/dc/af/0adcafe5538409b77870271287c93098.jpg'}
+      />
+    </Box>
   );
 }
