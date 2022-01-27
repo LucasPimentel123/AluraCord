@@ -1,6 +1,12 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js'
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMxNzkxMSwiZXhwIjoxOTU4ODkzOTExfQ.PtOPsIK_BpFeqDJUVCkgbhTYikPFqYOnoLl-I_lySMM';
+const SUPABASE_URL = 'https://kdneagewhplfzxilqxmr.supabase.co';
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 
 
 
@@ -8,25 +14,43 @@ export default function ChatPage() {
     const [mensagem, setMensagem] = React.useState('');
     const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
+    React.useEffect(() => {
+             supabaseClient.from('mensagens')
+             .select('*')
+             .order('id', {ascending: false})
+            .then(({ data }) => {
+                setListaDeMensagens(data);
+            });
+    }, []);
+
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             texto: novaMensagem,
-            id: listaDeMensagens.length + 1,
+            //id: listaDeMensagens.length + 1,
             de: 'Lucas'
         };
-        setListaDeMensagens([
-            mensagem,
-            ...listaDeMensagens
-        ]);
-        setMensagem('');
+
+        supabaseClient
+            .from('mensagens')
+            .insert([mensagem])
+            .then(({data}) => {
+                setListaDeMensagens([
+                    data[0],
+                    ...listaDeMensagens
+                ]);
+                setMensagem('');
+            });
+    }
+
+    function limpaMensagens(listaDeMensagens) {
+        console.log();
     }
 
     return (
         <Box
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backgroundColor: appConfig.theme.colors.primary[500],
-                backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
+                backgroundImage: `url(https://images3.alphacoders.com/707/707551.jpg)`,
                 backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
                 color: appConfig.theme.colors.neutrals['000']
             }}
@@ -45,7 +69,7 @@ export default function ChatPage() {
                     padding: '32px',
                 }}
             >
-                <Header />
+                {<Header />}
                 <Box
                     styleSheet={{
                         position: 'relative',
@@ -92,6 +116,14 @@ export default function ChatPage() {
                                 color: appConfig.theme.colors.neutrals[200],
                             }}
                         />
+                        <Button
+                            colorVariant="positive"
+                            label="Enviar"
+                            rounded="full"
+                            onClick={(event) => {
+                                handleNovaMensagem(mensagem);
+                            }}
+                        />
                     </Box>
                 </Box>
             </Box>
@@ -111,6 +143,13 @@ function Header() {
                     colorVariant='neutral'
                     label='Logout'
                     href="/"
+                />
+                <Button
+                    variant='secondary'
+                    onClick={(event) => {
+                    }}
+                    colorVariant='negative'
+                    label='Clear'
                 />
             </Box>
         </>
@@ -158,7 +197,7 @@ function MessageList(props) {
                                     display: 'inline-block',
                                     marginRight: '8px',
                                 }}
-                                src={`https://github.com/Lucaspimentel123.png`}
+                                src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Text tag="strong">
                                 {mensagem.de}
