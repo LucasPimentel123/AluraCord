@@ -48,7 +48,7 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={function (infoEvent) {
               infoEvent.preventDefault();
-              roteamento.push('/chat');
+              roteamento.push(`\chat?username=${username}`);
 
             }}
             styleSheet={{
@@ -118,6 +118,7 @@ function Titulo(props) {
     </>
   );
 }
+
 
 function BotaoEntrar(props) {
   if (confereUserName(props.name)) {

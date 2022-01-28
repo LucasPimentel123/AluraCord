@@ -1,45 +1,65 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js'
+import { ButtonSendSticker } from '../src/buttonSendSticker';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMxNzkxMSwiZXhwIjoxOTU4ODkzOTExfQ.PtOPsIK_BpFeqDJUVCkgbhTYikPFqYOnoLl-I_lySMM';
 const SUPABASE_URL = 'https://kdneagewhplfzxilqxmr.supabase.co';
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-
+function escutaMensagensEmTempoReal(adicionaMensagem) {
+    return supabaseClient
+      .from('mensagens')
+      .on('INSERT', (respostaLive) => {
+        adicionaMensagem(respostaLive.new);
+      })
+      .subscribe();
+  }
 
 
 export default function ChatPage() {
     const [mensagem, setMensagem] = React.useState('');
+    const roteamento = useRouter();
+    const usuarioLogado = roteamento.query.username;
     const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
     React.useEffect(() => {
-             supabaseClient.from('mensagens')
-             .select('*')
-             .order('id', {ascending: false})
+        supabaseClient.from('mensagens')
+            .select('*')
+            .order('id', { ascending: false })
             .then(({ data }) => {
                 setListaDeMensagens(data);
             });
+
+            escutaMensagensEmTempoReal((novaMensagem) => {
+            setListaDeMensagens( (valorAtualDaLista) => {
+                return [
+                    novaMensagem,
+                    ...valorAtualDaLista,
+                ]
+            });
+        });
     }, []);
+
+    
 
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             texto: novaMensagem,
             //id: listaDeMensagens.length + 1,
-            de: 'Lucas'
+            de: usuarioLogado
         };
 
         supabaseClient
             .from('mensagens')
             .insert([mensagem])
-            .then(({data}) => {
-                setListaDeMensagens([
-                    data[0],
-                    ...listaDeMensagens
-                ]);
-                setMensagem('');
+            .then(({ data }) => {
+                console.log('Criando mensagem: ', data);
+                
             });
+            setMensagem('');
     }
 
     function limpaMensagens(listaDeMensagens) {
@@ -114,6 +134,11 @@ export default function ChatPage() {
                                 backgroundColor: appConfig.theme.colors.neutrals[800],
                                 marginRight: '12px',
                                 color: appConfig.theme.colors.neutrals[200],
+                            }}
+                        />
+                        <ButtonSendSticker
+                            onStickerClick={(sticker) => {
+                                handleNovaMensagem(':sticker: ' + sticker);
                             }}
                         />
                         <Button
@@ -213,7 +238,20 @@ function MessageList(props) {
                                 {(new Date().toLocaleDateString())}
                             </Text>
                         </Box>
-                        {mensagem.texto}
+                        {mensagem.texto.startsWith(':sticker:')
+                            ? (
+                                <Image
+                                    src={mensagem.texto.replace(':sticker:','')}
+                                    styleSheet={{
+                                        height: 'auto',
+                                        'max-heigth': '100px',
+                                        'max-width': '100px',
+                                        width: 'auto'
+                                    }}
+                                    />  )
+                            : (
+                                mensagem.texto
+                            )}
                     </Text>
                 );
             })}
